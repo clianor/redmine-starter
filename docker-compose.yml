@@ -1,0 +1,39 @@
+version: '3.3'
+
+services:
+
+  redmine:
+    container_name: redmine
+    build:
+      context: ./redmine
+      dockerfile: ./Dockerfile
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      REDMINE_DB_MYSQL: db
+      REDMINE_DB_PASSWORD: core2020
+      REDMINE_DB_DATABASE: redmine
+      REDMINE_DB_ENCODING: utf8
+      REDMINE_PLUGINS_MIGRATE: 1
+      TZ: Asia/Seoul
+    volumes: 
+      - redmine_data:/usr/src/redmine
+
+  db:
+    container_name: mariadb
+    image: mariadb:10.5.4
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: core2020
+      MYSQL_DATABASE: redmine
+      TZ: Asia/Seoul
+    volumes:
+      - ./mariadb-volume:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+volumes: 
+  redmine_data:
+    driver: local
